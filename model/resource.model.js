@@ -12,7 +12,7 @@ const resourceSchema = new mongoose.Schema({
     max: 12
   },
   description: String,
-  cloudinaryPublicId: String  // Store the public ID of the uploaded file in Cloudinary
+  cloudinaryUrl: String // Store the Cloudinary URL of the uploaded file
 });
 
 const Resource = mongoose.model('Resource', resourceSchema);

@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const cors = require('cors');
 const userRoutes = require('./routes/user.routes');
 const uploadResource = require('./middleware/upload.middleware'); 
 const { authenticateToken, isAdmin } = require('./middleware/auth.middleware');
@@ -10,6 +11,8 @@ const clubAdmissionRoutes = require('./routes/club-addmission.route'); // Import
 const app = express();
 
 app.use(express.json());
+// Enable CORS for all origins
+app.use(cors());
 
 // Connect to MongoDB
 mongoose.connect('mongodb://localhost:27017/auth_example', {

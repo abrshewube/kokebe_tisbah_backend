@@ -26,14 +26,14 @@ async function uploadResource(req, res, next) {
     const result = await cloudinary.uploader.upload(file.path);
     console.log('File uploaded to Cloudinary:', result.url);
 
-    // Create resource with Cloudinary public ID
+    // Create resource with Cloudinary URL
     console.log('Creating resource entry in database...');
     const newResource = new Resource({
       title: req.body.title,
       category: req.body.category,
       gradeLevel: req.body.gradeLevel,
       description: req.body.description,
-      cloudinaryPublicId: result.public_id
+      cloudinaryUrl: result.url // Store the Cloudinary URL
     });
     await newResource.save();
 
