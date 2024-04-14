@@ -47,4 +47,4 @@ function checkGradeLevel(req, res, next) {
   next();
 }
 
-module.exports = { authenticateToken, isAdmin, checkGradeLevel };
+module.exports = { authenticateToken, isAdmin,isClubAdmin, checkGradeLevel };
