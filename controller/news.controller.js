@@ -37,6 +37,23 @@ async function createSchoolNews(req, res) {
   }
 }
 
+// Controller function to get details of a specific school news item
+async function getSchoolNewsDetails(req, res) {
+  try {
+    const { id } = req.params;
+    const newsItem = await SchoolNews.findById(id);
+
+    if (!newsItem) {
+      return res.status(404).json({ message: 'News not found' });
+    }
+
+    res.status(200).json({ news: newsItem });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server Error' });
+  }
+}
+
 // Controller function to get all school news
 async function getAllSchoolNews(req, res) {
   try {
@@ -95,4 +112,4 @@ async function updateSchoolNews(req, res) {
     res.status(500).json({ message: 'Server Error' });
   }
 }
-module.exports = { createSchoolNews, getAllSchoolNews,deleteSchoolNews,updateSchoolNews };
+module.exports = { createSchoolNews,getSchoolNewsDetails, getAllSchoolNews,deleteSchoolNews,updateSchoolNews };

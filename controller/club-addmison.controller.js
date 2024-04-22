@@ -84,9 +84,10 @@ async function processClubApplication(req, res) {
     }
 }
 
+
 async function getUserApplications(req, res) {
     try {
-        const loggedInUserId = req.user._id;
+        const loggedInUserId = req.user._id; // Use req.userId instead of req.user._id
 
         // Fetch club applications for the specified user
         const applications = await ClubApplication.find({ user: loggedInUserId }).populate('club', 'name status');
@@ -97,5 +98,6 @@ async function getUserApplications(req, res) {
         res.status(500).json({ message: 'Server Error' });
     }
 }
+
 
 module.exports = { applyForClub, getClubApplications, processClubApplication ,getUserApplications};

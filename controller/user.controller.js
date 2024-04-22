@@ -60,5 +60,17 @@ async function login(req, res) {
     res.status(500).json({ message: 'Server Error' });
   }
 }
+async function getUserId(req, res) {
+  try {
+    // Assuming the decoded user object is stored in req.user by the authMiddleware
+    const userId = req.user._id; // Assuming your User model has a field called '_id' for user ID
+    console.log("userId", userId);
+    res.json({ userId });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server Error' });
+  }
+}
 
-module.exports = { register, login };
+
+module.exports = { register, login ,getUserId};

@@ -12,14 +12,34 @@ async function getAllClubs(req, res) {
   }
 }
 
+
+// Get club details by ID
+async function getClubById(req, res) {
+    try {
+        const { id } = req.params;
+        const club = await Club.findById(id).populate('leader', 'username').populate('members', 'username');
+        if (!club) {
+            return res.status(404).json({ message: 'Club not found' });
+        }
+        res.status(200).json({ club });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server Error' });
+    }
+}
+
+
 // Create a club (accessible only to admins)
 async function createClub(req, res) {
   try {
-    const { name, description } = req.body;
-    const newClub = new Club({ name, description });
+    // Allow creating clubs with any fields by directly passing the request body to the Club model
+    const newClub = new Club(req.body);
     await newClub.save();
+
+    // Respond with a success message and the created club object
     res.status(201).json({ message: 'Club created successfully', club: newClub });
   } catch (error) {
+    // Handle errors by logging them and sending an error response
     console.error(error);
     res.status(500).json({ message: 'Server Error' });
   }
@@ -134,5 +154,28 @@ async function approveDenyStudentMembership(req, res) {
     res.status(500).json({ message: 'Server Error' });
   }
 }
+// Get club ID by club admin's ID
+// Get club ID by club admin's ID
+async function getClubIdByAdminId(req, res) {
+  try {
+    // Check if the requester is a club admin
+    if (req.user.role !== 'club_admin') {
+      return res.status(403).json({ message: 'Access Denied: Club Admin only' });
+    }
+    
+    // Find the club where the user is the leader (club admin)
+    const club = await Club.findOne({ leader: req.user._id });
+    if (!club) {
+      return res.status(404).json({ message: 'Club not found for the current user' });
+    }
 
-module.exports = { getAllClubs, createClub, deleteClub, assignClubLeader, editClubDetails, approveDenyStudentMembership };
+    // Return the club ID as a string
+    res.status(200).json({ clubId: club._id.toString() });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server Error' });
+  }
+}
+
+
+module.exports = { getAllClubs,getClubById, getClubIdByAdminId,createClub, deleteClub, assignClubLeader, editClubDetails, approveDenyStudentMembership };

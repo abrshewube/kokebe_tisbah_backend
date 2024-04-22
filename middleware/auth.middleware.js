@@ -23,6 +23,7 @@ function authenticateToken(req, res, next) {
 }
 
 function isAdmin(req, res, next) {
+  console.log("role is",req.user.role)
   if (req.user.role !== 'admin') {
     return res.status(403).json({ message: 'Access Denied: Admin only' });
   }
@@ -36,6 +37,12 @@ function isClubAdmin(req, res, next) {
   next();
 }
 
+function isRegistralRole(req, res, next) {
+  if (req.user.role !== 'registral_role') {
+    return res.status(403).json({ message: 'Access Denied: Registrals only' });
+  }
+  next();
+}
 function checkGradeLevel(req, res, next) {
   if (req.user.role !== 'student') {
     return res.status(403).json({ message: 'Access Denied: Student only' });
@@ -47,4 +54,4 @@ function checkGradeLevel(req, res, next) {
   next();
 }
 
-module.exports = { authenticateToken, isAdmin,isClubAdmin, checkGradeLevel };
+module.exports = { authenticateToken, isRegistralRole,isAdmin,isClubAdmin, checkGradeLevel };

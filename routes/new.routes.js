@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { createSchoolNews, getAllSchoolNews,deleteSchoolNews,updateSchoolNews } = require('../controller/news.controller');
+const { createSchoolNews, getAllSchoolNews, getSchoolNewsDetails,deleteSchoolNews,updateSchoolNews } = require('../controller/news.controller');
 const { authenticateToken, isAdmin } = require('../middleware/auth.middleware');
 const multer = require('multer');
 
@@ -13,6 +13,7 @@ router.post('/', authenticateToken, isAdmin, upload.single('image'), createSchoo
 
 // Get all school news endpoint
 router.get('/', getAllSchoolNews);
+router.get('/:id', getSchoolNewsDetails);
 
 // Delete school news endpoint (accessible only to admins)
 router.delete('/:id', authenticateToken, isAdmin, deleteSchoolNews);
