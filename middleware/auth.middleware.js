@@ -1,7 +1,8 @@
 const jwt = require('jsonwebtoken');
 const User = require('../model/user.model');
 
-function authenticateToken(req, res, next) {
+// Middleware to authenticate JWT token
+async function authenticateToken(req, res, next) {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
   if (!token) return res.sendStatus(401);
@@ -10,10 +11,19 @@ function authenticateToken(req, res, next) {
     if (err) return res.sendStatus(403);
 
     try {
+      // Find the user by username extracted from the decoded token
       const user = await User.findOne({ username: decoded.username });
       if (!user) return res.sendStatus(403);
 
-      req.user = user;
+      // Set req.user with user information including profilePicture
+      req.user = {
+        _id: user._id,
+        fullName: user.fullName,
+        username: user.username,
+        role: user.role,
+        grade: user.grade,
+        profilePicture: user.profilePicture // Include profilePicture from user document
+      };
       next();
     } catch (error) {
       console.error(error);
@@ -22,14 +32,15 @@ function authenticateToken(req, res, next) {
   });
 }
 
+// Middleware to check if user is an admin
 function isAdmin(req, res, next) {
-  console.log("role is",req.user.role)
   if (req.user.role !== 'admin') {
     return res.status(403).json({ message: 'Access Denied: Admin only' });
   }
   next();
 }
 
+// Middleware to check if user is a club admin
 function isClubAdmin(req, res, next) {
   if (req.user.role !== 'club_admin') {
     return res.status(403).json({ message: 'Access Denied: Club Admin only' });
@@ -37,12 +48,15 @@ function isClubAdmin(req, res, next) {
   next();
 }
 
+// Middleware to check if user has a registral role
 function isRegistralRole(req, res, next) {
   if (req.user.role !== 'registral_role') {
     return res.status(403).json({ message: 'Access Denied: Registrals only' });
   }
   next();
 }
+
+// Middleware to check if user is a student and validate grade level
 function checkGradeLevel(req, res, next) {
   if (req.user.role !== 'student') {
     return res.status(403).json({ message: 'Access Denied: Student only' });
@@ -54,4 +68,4 @@ function checkGradeLevel(req, res, next) {
   next();
 }
 
-module.exports = { authenticateToken, isRegistralRole,isAdmin,isClubAdmin, checkGradeLevel };
+module.exports = { authenticateToken, isRegistralRole, isAdmin, isClubAdmin, checkGradeLevel };

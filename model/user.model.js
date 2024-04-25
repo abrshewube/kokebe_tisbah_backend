@@ -6,9 +6,10 @@ const userSchema = new mongoose.Schema({
   password: String,
   role: {
     type: String,
-    default: 'student' // Default role is set to 'student'
+    default: 'student'
   },
   grade: Number,
+  profilePicture: String // Add profilePicture field to store the URL of the profile picture
 });
 
 const User = mongoose.model('User', userSchema);

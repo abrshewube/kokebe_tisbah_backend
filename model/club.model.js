@@ -24,15 +24,15 @@ const clubSchema = new mongoose.Schema({
     },
     category: {
         type: String,
-        required: true
+        
     },
     establishedDate: {
         type: Date,
-        required: true
+      
     },
     location: {
         type: String,
-        required: true
+       
     },
     website: {
         type: String,
@@ -44,7 +44,7 @@ const clubSchema = new mongoose.Schema({
     },
     contactNumber: {
         type: String,
-        required: true
+      
     },
     events: [{
         type: String
