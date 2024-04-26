@@ -40,5 +40,6 @@ const upload = multer({ storage });
 // File upload endpoint
 app.post('/api/resources/upload', authenticateToken, isAdmin, upload.single('file'), uploadResource);
 
+
 // Start the server
 app.listen(3000, () => console.log('Server running on http://localhost:3000'));
