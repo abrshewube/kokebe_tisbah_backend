@@ -19,7 +19,8 @@ app.use(express.json());
 app.use(cors());
 
 // Connect to MongoDB
-mongoose.connect('mongodb://127.0.0.1:27017/auth_example', {
+// Connect to MongoDB
+mongoose.connect("mongodb+srv://kidusmusie:kidlla77@cluster0.caknzcx.mongodb.net/kokebe?retryWrites=true&w=majority&appName=Cluster0",{
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
