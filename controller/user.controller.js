@@ -1,17 +1,15 @@
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const cloudinary = require('cloudinary').v2; // Import Cloudinary
+const cloudinary = require('cloudinary').v2;
 const User = require('../model/user.model');
 const nodemailer = require('nodemailer');
 
-// Initialize Cloudinary
 cloudinary.config({
   cloud_name: 'dcixfqemc',
   api_key: '443894683639552',
   api_secret: 'bhj1-SWNgJSdjnFZE7Yv0jFqTMs'
 });
 
-// Configure Nodemailer
 const transporter = nodemailer.createTransport({
   service: 'Gmail',
   auth: {
@@ -20,38 +18,31 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-// Function to register a new user
-// Function to register a new user
 async function register(req, res) {
   try {
     const { fullName, username, password, role, grade, email } = req.body;
     const profilePicture = req.files.profilePicture ? req.files.profilePicture[0] : null;
     const schoolIdPhoto = req.files.schoolIdPhoto ? req.files.schoolIdPhoto[0] : null;
 
-    // Check if the username already exists
     const existingUser = await User.findOne({ username });
     if (existingUser) {
       return res.status(400).json({ message: 'Username already exists' });
     }
 
-    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Upload profile picture to Cloudinary
     let profilePictureUrl = '';
     if (profilePicture) {
       const result = await cloudinary.uploader.upload(profilePicture.path);
       profilePictureUrl = result.secure_url;
     }
 
-    // Upload school ID photo to Cloudinary
     let schoolIdPhotoUrl = '';
     if (schoolIdPhoto) {
       const result = await cloudinary.uploader.upload(schoolIdPhoto.path);
       schoolIdPhotoUrl = result.secure_url;
     }
 
-    // Create user with profile picture and school ID photo URLs
     const user = new User({
       fullName,
       username,
@@ -72,6 +63,35 @@ async function register(req, res) {
   }
 }
 
+async function login(req, res) {
+  try {
+    const { username, password } = req.body;
+
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res.status(401).json({ message: 'Invalid username or password' });
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return res.status(401).json({ message: 'Invalid username or password' });
+    }
+
+    const token = jwt.sign({
+      username: user.username,
+      role: user.role,
+      fullName: user.fullName,
+      _id: user._id,
+      grade: user.grade,
+      profilePicture: user.profilePicture
+    }, 'secret');
+
+    res.json({ token });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server Error' });
+  }
+}
 
 // Function to upload profile picture
 async function uploadProfilePicture(req, res) {
@@ -132,39 +152,39 @@ async function updateProfile(req, res) {
   }
 }
 
-// Function for user login
-async function login(req, res) {
-  try {
-    const { username, password } = req.body;
+// // Function for user login
+// async function login(req, res) {
+//   try {
+//     const { username, password } = req.body;
 
-    // Find user by username
-    const user = await User.findOne({ username });
-    if (!user) {
-      return res.status(401).json({ message: 'Invalid username or password' });
-    }
+//     // Find user by username
+//     const user = await User.findOne({ username });
+//     if (!user) {
+//       return res.status(401).json({ message: 'Invalid username or password' });
+//     }
 
-    // Check password
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
-      return res.status(401).json({ message: 'Invalid username or password' });
-    }
+//     // Check password
+//     const isPasswordValid = await bcrypt.compare(password, user.password);
+//     if (!isPasswordValid) {
+//       return res.status(401).json({ message: 'Invalid username or password' });
+//     }
 
-    // Generate JWT token
-    const token = jwt.sign({
-      username: user.username,
-      role: user.role,
-      fullName: user.fullName,
-      _id: user._id,
-      grade: user.grade,
-      profilePicture: user.profilePicture
-    }, 'secret');
+//     // Generate JWT token
+//     const token = jwt.sign({
+//       username: user.username,
+//       role: user.role,
+//       fullName: user.fullName,
+//       _id: user._id,
+//       grade: user.grade,
+//       profilePicture: user.profilePicture
+//     }, 'secret');
 
-    res.json({ token });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server Error' });
-  }
-}
+//     res.json({ token });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: 'Server Error' });
+//   }
+// }
 
 // Function to delete user (restricted to admin role)
 async function deleteUser(req, res) {
