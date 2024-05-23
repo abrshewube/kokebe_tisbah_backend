@@ -68,7 +68,7 @@ async function approveRegistration(req, res) {
     }
 
     // Check if the user is allowed to approve registrations
-    if (req.user.role !== 'registral_role') {
+    if (req.user.role !== 'admin') {
       return res.status(403).json({ message: 'Access Denied: Registral Role only' });
     }
 
@@ -90,7 +90,7 @@ async function denyRegistration(req, res) {
     }
 
     // Check if the user is allowed to deny registrations
-    if (req.user.role !== 'registral_role') {
+    if (req.user.role !== 'admin') {
       return res.status(403).json({ message: 'Access Denied: Registral Role only' });
     }
 
