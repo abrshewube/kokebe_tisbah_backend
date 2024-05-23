@@ -3,7 +3,7 @@
 const express = require('express');
 const router = express.Router();
 const { createRegistration, approveRegistration, getUnregisteredStudents,  denyRegistration, getRegistrationStatus } = require('../controller/registration.controller');
-const { authenticateToken, isRegistralRole } = require('../middleware/auth.middleware');
+const { authenticateToken, isRegistralRole, isAdmin } = require('../middleware/auth.middleware');
 
 const multer = require('multer');
 
@@ -16,10 +16,10 @@ router.post('/', authenticateToken, upload.single('lastYearGradeResult'), create
 router.get('/unregistered' , getUnregisteredStudents);
 
 // Approve registration endpoint (accessible to users with registral_role)
-router.put('/approve/:id', authenticateToken, isRegistralRole, approveRegistration);
+router.put('/approve/:id', authenticateToken, isAdmin, approveRegistration);
 
 // Deny registration endpoint (accessible to users with registral_role)
-router.put('/deny/:id', authenticateToken, isRegistralRole, denyRegistration);
+router.put('/deny/:id', authenticateToken, isAdmin, denyRegistration);
 
 // Endpoint to get registration status of the current user
 router.get('/status', authenticateToken, getRegistrationStatus);
