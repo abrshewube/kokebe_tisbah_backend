@@ -19,7 +19,7 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 // Connect to MongoDB
-mongoose.connect("mongodb+srv://abenezerzgeyework:NKx7e1prjVAOuHsh@cluster0.dcmutbn.mongodb.net/kokebe?retryWrites=true&w=majority&appName=Cluster0",{
+mongoose.connect("mongodb+srv://abeneboss:abeneboss@cluster0.m1vodts.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",{
  
 });
 
