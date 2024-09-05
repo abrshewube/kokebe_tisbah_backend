@@ -24,6 +24,7 @@ mongoose.connect("mongodb+srv://kokebe:kokebe2727@cluster0.m1vodts.mongodb.net/?
 });
 
 
+
 // Routes
 app.use('/api/users', userRoutes);
 app.use('/api/resources', authenticateToken, resourceRoutes);
